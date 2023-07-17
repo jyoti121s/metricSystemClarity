@@ -1,9 +1,11 @@
 package com.metricProject.metricSystem;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import java.sql.Timestamp;
-
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -35,29 +37,6 @@ public class MetricsControllerTest {
 	@MockBean
 	private MetricService metricService;
 	
-	public void testGetMetric() throws Exception{
-		Metric mockMetric = new Metric();
-		mockMetric.setId(1);
-		mockMetric.setSystem("system");
-		mockMetric.setName("name1");
-		Timestamp timestamp = new Timestamp(2023, 07, 16, 19, 01, 20, 00);
-		mockMetric.setFromDate(timestamp);
-		mockMetric.setVal(5);
-
-		Mockito.when(metricService.getMetric(Mockito.anyLong())).thenReturn(mockMetric);
-		//Mockito.when(metricService.getMetrics()
-		//		.thenReturn(mockMetric);
-		
-		String URI = "/metrics";
-		RequestBuilder requestBuilder = MockMvcRequestBuilders.get(URI).accept(MediaType.APPLICATION_JSON);
-		
-		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-		String expectedJson = JSONValue.toJSONString(mockMetric);  //this.mapToJson(mockMetric);
-		String outputInJson = result.getResponse().getContentAsString();
-		//assertEquals(expectedJson, outputInJson);
-		
-	}
-	
 	@Test
 	public void testGetMetrics() throws Exception{
 		List<Metric> mockMetric = new ArrayList<>();		
@@ -66,25 +45,49 @@ public class MetricsControllerTest {
 		e.setId(1);
 		e.setSystem("system");
 		e.setName("name1");
-		//Timestamp timestamp = new Timestamp(2023, 07, 16, 19, 01, 20, 00);
 		e.setFromDate(new Timestamp(0));
 		e.setVal(5);
 		mockMetric.add(e);
 
-		//Mockito.when(metricService.getMetric(Mockito.anyLong())).thenReturn(mockMetric);
-		//Mockito.when(metricService.getMetrics()
-		
 		String URI = "/metrics";
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.get(URI).accept(MediaType.APPLICATION_JSON);
 		
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-		String expectedJson = JSONValue.toJSONString(mockMetric);  //this.mapToJson(mockMetric);
+		//String expectedJson = JSONValue.toJSONString(mockMetric);  //this.mapToJson(mockMetric);
 		String outputInJson = result.getResponse().getContentAsString();
 		assertFalse(outputInJson.isEmpty());
 		//assertEquals(expectedJson, outputInJson);
 		
 	}
 	
+	
+	public void testGetMetric() throws Exception{
+		
+		Date date = new Date();  
+		Date d = new Date(System.currentTimeMillis());
+	    DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");  
+	    String strDate = formatter.format(date); 
+	    Date fromDate = formatter.parse(strDate);
+		
+	    
+		Metric mockMetric = new Metric();
+		mockMetric.setId(1);
+		mockMetric.setSystem("system");
+		mockMetric.setName("name1");
+		mockMetric.setFromDate(fromDate);
+		mockMetric.setVal(5);
+
+		Mockito.when(metricService.getMetric(Mockito.anyLong())).thenReturn(mockMetric);
+		
+		String URI = "/metrics/1";
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.get(URI).accept(MediaType.APPLICATION_JSON);
+		
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+		String expectedJson =
+				JSONValue.toJSONString(mockMetric);  //this.mapToJson(mockMetric);
+		String outputInJson = result.getResponse().getContentAsString();
+		assertEquals(expectedJson, outputInJson);
+	}
 	
 
 }

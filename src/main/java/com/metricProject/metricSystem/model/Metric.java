@@ -1,6 +1,10 @@
 package com.metricProject.metricSystem.model;
 import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.Column;
@@ -28,12 +32,12 @@ public class Metric {
 	@Column(unique=true)
 	private String name;
 	
-	@CreationTimestamp
 	@Column(name = "fromDate", unique=true)
+	@JsonFormat(pattern = "dd/MM/yyyy hh:mm:ss")
 	private Date fromDate;
 	
-	@Value(value = "1")
-	private long val;
+	
+	private int val = 1;
 	
 	public long getId() {
 		return id;
@@ -63,15 +67,15 @@ public class Metric {
 		return fromDate;
 	}
 
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
+	public void setFromDate(Date unixTimestamp) {
+		this.fromDate = unixTimestamp;
 	}
 
-	public long getVal() {
+	public int getVal() {
 		return val;
 	}
 
-	public void setVal(long val) {
+	public void setVal(int val) {
 		this.val = val;
 	}
 

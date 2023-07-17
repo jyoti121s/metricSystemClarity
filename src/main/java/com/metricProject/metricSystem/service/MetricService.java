@@ -21,9 +21,5 @@ public interface MetricService {
 	public List<MetricSummary> getMetricSummary();
 	
 	public MetricSummary saveMetricSummary(MetricSummary newMetricSummary);
-	
-	public Long isValidId(Long id);
-	
-	public String isValidSystem(String system);
 
 }
